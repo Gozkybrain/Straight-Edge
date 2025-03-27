@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+
+
+.more-games-container {
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    color: #00ffcc;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .more-games-title {
+    font-size: 2rem;
+    color: #00ffcc;
+    text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+    margin-bottom: 15px;
+  }
+  
+
+  .more-games-text {
+    font-size: 16px;
+    color: #bbf7ff;
+    line-height: 1.5;
+    font-family: 'Roboto', sans-serif; 
+  }
+  
+
+
+  @media (max-width: 500px) {
+    .more-games-title {
+      text-shadow: 0 0 2px #00ffcc, 0 0 4px #00ffcc; 
+    }
+  }
+  

@@ -1,0 +1,104 @@
+
+
+body {
+  font-size: 1.5rem;
+  color: #dedede;
+  background-color: #f4f4f4;
+}
+
+
+
+/* Holographic button */
+button {
+  padding: 15px 30px;
+  font-size: 14px;
+  margin: 20px 0;
+  font-weight: bold;
+  color: #00f9ff;
+  font-family: 'Orbitron', sans-serif;
+  background: transparent;
+  border: 2px solid #00f9ff;
+  border-radius: 50px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+  z-index: 0;
+}
+
+/* Floating holographic effect */
+button:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(0, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: hologram 2s ease-in-out infinite;
+  z-index: -1;
+}
+
+
+button:hover {
+  color: #000000;
+  background-color: #00f9ff;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 1);
+  animation: bounce 0.6s ease-in-out;
+}
+
+
+button span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hologram animation */
+@keyframes hologram {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Bounce animation */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 1);
+}
+
+
+@media (max-width: 500px) {
+  body {
+    background-color: #121852;
+
+  }
+}

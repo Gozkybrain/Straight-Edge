@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.tap-tap {
+    font-size: 35px;
+    font-weight: bold;
+    color: transparent;
+    font-family: 'Roboto', sans-serif; 
+    background: linear-gradient(45deg, #00f9ff, #ff00e6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    text-align: center;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: glowing-text 1.5s infinite alternate;
+}
+
+/* Glowing animation */
+@keyframes glowing-text {
+    0% {
+        text-shadow: 0 0 10px rgba(0, 249, 255, 0.8), 0 0 20px rgba(0, 249, 255, 0.6), 0 0 30px rgba(0, 249, 255, 0.4);
+    }
+
+    50% {
+        text-shadow: 0 0 20px rgba(255, 0, 230, 0.8), 0 0 30px rgba(255, 0, 230, 0.6), 0 0 40px rgba(255, 0, 230, 0.4);
+    }
+
+    100% {
+        text-shadow: 0 0 10px rgba(0, 249, 255, 0.8), 0 0 20px rgba(0, 249, 255, 0.6), 0 0 30px rgba(0, 249, 255, 0.4);
+    }
+}
+
+
+
+.typed-text {
+    font-size: 30px;
+    margin-bottom: 40px;
+    color: #00f9ff;
+    white-space: nowrap;
+    font-family: 'Roboto', sans-serif; 
+    overflow: hidden;
+    width: max-content;
+    max-width: 100%;
+    display: inline-block;
+}
+
+.get-started {
+    text-align: right;
+    font-size: 18px;
+    color: #00f9ff;
+    width: 100%;
+}
+
+
+.image-container {
+    width: 250px;
+    height: 250px;
+    margin-bottom: 20px;
+    transition: opacity 1s ease;
+}
+
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
+@media (max-width: 500px) {
+    .tap-tap {
+        font-weight: 500;  
+    }
+
+    /* Glowing animation */
+    @keyframes glowing-text {
+        0% {
+            text-shadow: 0 0 5px rgba(0, 249, 255, 0.8), 0 0 10px rgba(0, 249, 255, 0.6), 0 0 15px rgba(0, 249, 255, 0.4);
+        }
+
+        50% {
+            text-shadow: 0 0 10px rgba(255, 0, 230, 0.8), 0 0 20px rgba(255, 0, 230, 0.6), 0 0 30px rgba(255, 0, 230, 0.4);
+        }
+
+        100% {
+            text-shadow: 0 0 5px rgba(0, 249, 255, 0.8), 0 0 10px rgba(0, 249, 255, 0.6), 0 0 15px rgba(0, 249, 255, 0.4);
+        }
+    }
+
+    .tap-tap {
+        animation: glowing-text 1.5s ease-in-out infinite; 
+    }
+}
+

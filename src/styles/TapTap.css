@@ -1,0 +1,132 @@
+
+.taptap-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.balance-display {
+    font-size: 32px;
+    color: #0ff;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.7), 0 0 30px rgba(255, 0, 255, 0.6);
+    margin-top: 5px;
+    transition: opacity 0.3s ease;
+    font-family: 'Orbitron', sans-serif; 
+}
+
+
+.coin-container {
+    position: relative;
+    width: 300px; 
+    height: 300px; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.coin-container:active {
+    transform: scale(1.1);
+}
+
+
+.coinImage {
+    width: 100%;  
+    height: 100%; 
+    border-radius: 50%; 
+}
+
+
+.sparkEffect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6), rgba(255, 215, 0, 0));
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 223, 0, 0.6);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.coin-container:active .sparkEffect {
+    opacity: 1;
+    transform: scale(1.2);
+    animation: double-pulse 0.6s ease;
+}
+
+@keyframes double-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+    25% {
+        box-shadow: 0 0 20px rgba(255, 255, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+    75% {
+        box-shadow: 0 0 20px rgba(255, 255, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7);
+    }
+}
+
+
+.flyOut {
+    position: absolute;
+    top: 10px;
+    right: -20px;
+    font-size: 18px;
+    color: #ff69b4;
+    font-weight: bold;
+    opacity: 0;
+    animation: flyOutAnimation 2s forwards;
+    text-shadow: 0 0 10px rgba(255, 0, 230, 0.8), 0 0 20px rgba(255, 0, 230, 0.6);
+    font-family: 'Orbitron', sans-serif;
+}
+
+@keyframes flyOutAnimation {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(20px) translateY(-20px);
+    }
+}
+
+
+.waiting-message {
+    font-size: 18px;
+    color: #ff6347;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif; 
+    margin-top: 10px;
+}
+
+
+@media screen and (max-width: 500px) {
+    .balance-display {
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 15px rgba(255, 0, 255, 0.4);
+    }
+
+    .waiting-message {
+        font-size: 16px;
+        text-shadow: none;
+    }
+    
+    .coin-container {
+        width: 250px;
+        height: 250px;
+    }
+
+    .coinImage {
+        width: 80%;
+        height: 80%;
+    }
+}
