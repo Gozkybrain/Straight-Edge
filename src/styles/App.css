@@ -1,22 +1,160 @@
+body {
+    margin: 0;
+    background-image: url("../images/purpleBG.avif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
 .app-container {
     max-width: 600px;
-    margin: 0 auto;
+    width: 90%;
     padding: 20px;
     font-family: Arial, sans-serif;
-  }
-  
-  .status-message {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-  }
-  
-  .status-message.error {
-    background: #ffebee;
-    color: #d32f2f;
-  }
-  
-  .status-message.info {
-    background: #e3f2fd;
-    color: #1565c0;
-  }
+    background: rgba(51, 51, 51, 0.8);
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: none;
+    border-image: linear-gradient(135deg, #00f9ff 0%, #ff00e6 100%);
+    border-image-slice: 1;
+    background:
+        linear-gradient(rgba(0, 10, 20, 0.9), rgba(0, 10, 20, 0.9)),
+        linear-gradient(135deg, rgba(0, 249, 255, 0.2) 0%, rgba(255, 0, 230, 0.2) 100%);
+    box-shadow:
+        0 0 15px rgba(0, 249, 255, 0.3),
+        inset 0 0 10px rgba(0, 249, 255, 0.2);
+    animation: status-pulse 3s infinite alternate;
+}
+
+
+.status-message {
+    padding: 15px 20px;
+    margin: 20px auto;
+    max-width: 80%;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    border: none;
+    border-image: linear-gradient(135deg, #00f9ff 0%, #ff00e6 100%);
+    border-image-slice: 1;
+    background:
+        linear-gradient(rgba(0, 10, 20, 0.9), rgba(0, 10, 20, 0.9)),
+        linear-gradient(135deg, rgba(0, 249, 255, 0.2) 0%, rgba(255, 0, 230, 0.2) 100%);
+    box-shadow:
+        0 0 15px rgba(0, 249, 255, 0.3),
+        inset 0 0 10px rgba(0, 249, 255, 0.2);
+    animation: status-pulse 3s infinite alternate;
+    border-radius: 45px 0 45px 0;
+}
+
+
+.status-message.error {
+    color: #ff3860;
+    text-shadow: 0 0 10px rgba(255, 56, 96, 0.7);
+    border-image: linear-gradient(135deg, #ff3860 0%, #ff7b00 100%);
+    box-shadow:
+        0 0 15px rgba(255, 56, 96, 0.5),
+        inset 0 0 10px rgba(255, 56, 96, 0.3);
+}
+
+
+.status-message.info {
+    color: #00f9ff;
+    text-shadow: 0 0 10px rgba(0, 249, 255, 0.7);
+}
+
+/* Animations */
+@keyframes status-pulse {
+    0% {
+        opacity: 0.9;
+        box-shadow:
+            0 0 12px rgba(0, 249, 255, 0.3),
+            inset 0 0 8px rgba(0, 249, 255, 0.2);
+    }
+
+    100% {
+        opacity: 1;
+        box-shadow:
+            0 0 18px rgba(0, 249, 255, 0.4),
+            inset 0 0 12px rgba(0, 249, 255, 0.3);
+    }
+}
+
+
+.status-message::before,
+.status-message::after,
+.app-container::before,
+.app-container::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border: 2px solid;
+    animation: bracket-pulse 2s infinite alternate;
+}
+
+.status-message::before,
+.app-container::before {
+    top: -5px;
+    left: -5px;
+    border-right: none;
+    border-bottom: none;
+    border-image: inherit;
+}
+
+.status-message::after,
+.app-container::after {
+    bottom: -5px;
+    right: -5px;
+    border-left: none;
+    border-top: none;
+    border-image: inherit;
+}
+
+
+/* Tablet Devices (768px and below) */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .status-message {
+        padding: 10px 15px;
+        max-width: 90%;
+    }
+}
+
+/* Mobile Devices (480px and below) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .app-container {
+        padding: 12px;
+        width: 100%;
+        max-width: 400px;
+        border-radius: 8px;
+    }
+
+}
+
+/* Very Small Mobile Devices (360px and below) */
+@media (max-width: 370px) {
+    .app-container {
+        padding: 10px;
+        max-width: 300px;
+        font-size: 0.9em;
+    }
+}

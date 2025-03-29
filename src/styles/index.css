@@ -3,7 +3,7 @@
 body {
   font-size: 1.5rem;
   color: #dedede;
-  background-color: #f4f4f4;
+  background-color: #2d2d2d;
 }
 
 
@@ -95,10 +95,3 @@ button:focus {
   box-shadow: 0 0 20px rgba(0, 255, 255, 1);
 }
 
-
-@media (max-width: 500px) {
-  body {
-    background-color: #121852;
-
-  }
-}

@@ -1,5 +1,7 @@
-// GetAuth.jsx
-export default function GetAuth({ 
+import React, { useState, useEffect } from 'react';
+import '../styles/GetAuth.css';
+
+const GetAuth = ({ 
   email, 
   setEmail, 
   password, 
@@ -9,67 +11,70 @@ export default function GetAuth({
   handleRegister, 
   handleLogin, 
   status 
-}) {
-  return (
-    <div>
-      <h2 style={{ color: '#333', marginBottom: '20px' }}>
-        {isRegistering ? 'Register' : 'Login'}
-      </h2>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        style={{
-          width: '100%',
-          padding: '10px',
-          margin: '10px 0',
-          border: '1px solid #ddd',
-          borderRadius: '4px'
-        }}
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        style={{
-          width: '100%',
-          padding: '10px',
-          margin: '10px 0',
-          border: '1px solid #ddd',
-          borderRadius: '4px'
-        }}
-      />
-      <button
-        onClick={isRegistering ? handleRegister : handleLogin}
-        style={{
-          width: '100%',
-          padding: '10px',
-          background: '#2196F3',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-        disabled={status.includes('Loading')}
-      >
-        {status.includes('Loading') ? 'Please wait...' : isRegistering ? 'Register' : 'Login'}
-      </button>
+}) => {
+  const [text, setText] = useState('');
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  
+  const displayDuration = 5000;
+  const texts = [
+    "Hello Sarcastic Geek Trybe,",
+    "Ready to Tap Tap?",
+    "Tap Tap to win!"
+  ];
 
-      <div style={{ marginTop: '10px', textAlign: 'center' }}>
+  useEffect(() => {
+    setText(texts[currentTextIndex]);
+    
+    if (currentTextIndex === texts.length - 1) return;
+
+    const timer = setTimeout(() => {
+      setCurrentTextIndex((prevIndex) => prevIndex + 1);
+    }, displayDuration);
+
+    return () => clearTimeout(timer);
+  }, [currentTextIndex]);
+
+  return (
+    <div className="auth-container">
+      <h3 className="tap-tap">Straight Edge</h3>
+      <div className="typed-text">{text}</div>
+      
+      <div className="log">
+        <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+        
+        <input
+          type="email"
+          className="auth-input"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        
+        <input
+          type="password"
+          className="auth-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
+        
         <button
+          className="auth-button"
+          onClick={isRegistering ? handleRegister : handleLogin}
+          disabled={status.includes('Loading')}
+        >
+          {status.includes('Loading') ? 'Please wait...' : isRegistering ? 'Register' : 'Login'}
+        </button>
+  
+        <button
+          className="toggle-auth"
           onClick={() => setIsRegistering(!isRegistering)}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#2196F3',
-            cursor: 'pointer'
-          }}
         >
           {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default GetAuth;

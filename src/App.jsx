@@ -14,7 +14,6 @@ import {
   handleTap,
   checkBalance,
   handleClaim,
-  generateUserWallet
 } from './lib/logic';
 import './styles/App.css';
 
@@ -27,13 +26,14 @@ const XION_CONFIG = {
   treasuryAddress: import.meta.env.VITE_TREASURY_ADDRESS
 };
 
+// Initialize connection to Xion blockchain
 async function initXionClient() {
   try {
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
       import.meta.env.VITE_TREASURY_MNEMONIC,
       { prefix: "xion" }
     );
-    
+
     const client = await SigningStargateClient.connectWithSigner(
       XION_CONFIG.rpcEndpoint,
       wallet,
@@ -42,7 +42,7 @@ async function initXionClient() {
         prefix: "xion"
       }
     );
-    
+
     await client.getChainId();
     return { client, isMock: false };
   } catch (error) {
@@ -74,6 +74,7 @@ function App() {
   const [tempMnemonic, setTempMnemonic] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
 
+  // Initialize blockchain connection
   useEffect(() => {
     initXionClient().then(({ client, isMock }) => {
       setXionClient(client);
@@ -82,6 +83,7 @@ function App() {
     });
   }, []);
 
+  // Auth state listener
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
@@ -115,10 +117,11 @@ function App() {
     setTempMnemonic('');
   };
 
+  // Loading states
   if (status.startsWith('Connecting')) {
-    return <LoadingScreen 
-      message={status} 
-      subMessage={isMock ? "Will use mock mode if connection fails" : null} 
+    return <LoadingScreen
+      message={status}
+      subMessage={isMock ? "Will use mock mode if connection fails" : null}
     />;
   }
 
@@ -126,8 +129,11 @@ function App() {
     return <LoadingScreen message="Checking authentication... Please wait" />;
   }
 
+
+  // Main render
   return (
     <div className="app-container">
+      {/* Display mnemonic phrase in a modal component */}
       {showMnemonic && (
         <MnemonicModal
           mnemonic={tempMnemonic}
@@ -135,14 +141,16 @@ function App() {
         />
       )}
 
+      {/* Status message display */}
       {status && !status.startsWith('Connecting') && (
         <div className={`status-message ${status.startsWith('Error') ? 'error' : 'info'}`}>
           {status}
         </div>
       )}
 
+      {/* Conditional rendering based on auth state */}
       {!user ? (
-        <GetAuth 
+        <GetAuth
           email={email}
           setEmail={setEmail}
           password={password}
@@ -150,18 +158,18 @@ function App() {
           isRegistering={isRegistering}
           setIsRegistering={setIsRegistering}
           handleRegister={() => handleRegister(
-            email, 
-            password, 
-            setUser, 
-            setStatus, 
-            setTempMnemonic, 
+            email,
+            password,
+            setUser,
+            setStatus,
+            setTempMnemonic,
             setShowMnemonic
           )}
           handleLogin={() => handleLogin(email, password, setStatus)}
           status={status}
         />
       ) : (
-        <GetUser 
+        <GetUser
           user={user}
           points={points}
           txHash={txHash}
@@ -170,13 +178,13 @@ function App() {
           handleLogout={() => handleLogout(setUser, setPoints, setTxHash, setStatus)}
           handleTap={() => handleTap(user, points, setPoints)}
           handleClaim={() => handleClaim(
-            user, 
-            points, 
-            xionClient, 
-            XION_CONFIG, 
-            setTxHash, 
-            setPoints, 
-            setStatus, 
+            user,
+            points,
+            xionClient,
+            XION_CONFIG,
+            setTxHash,
+            setPoints,
+            setStatus,
             isMock
           )}
           checkBalance={() => checkBalance(user, XION_CONFIG, setStatus)}

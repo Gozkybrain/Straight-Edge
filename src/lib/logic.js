@@ -2,6 +2,12 @@ import { auth, db } from './firebase';
 import { doc, updateDoc, increment, getDoc, setDoc } from 'firebase/firestore';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
+import {
+    signOut,
+    signInWithEmailAndPassword,  // Add this import
+    createUserWithEmailAndPassword  // Also add this if not already present
+} from 'firebase/auth'; // Add this import
+
 
 export const generateUserWallet = async () => {
   const wallet = await DirectSecp256k1HdWallet.generate(12, { prefix: "xion" });

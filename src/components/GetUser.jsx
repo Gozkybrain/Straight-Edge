@@ -12,7 +12,7 @@ export default function GetUser({
 }) {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div>
         <h2 style={{ color: '#333' }}>Welcome, {user.email}</h2>
         <button onClick={checkBalance} style={{ marginTop: '10px', padding: '8px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
           Check Balance for wallet
@@ -83,7 +83,7 @@ export default function GetUser({
           <p>Transaction Hash: {txHash}</p>
           {!isMock && (
             <a
-              href={`https://explorer.burnt.com/xion-testnet-1/account/${user.xionAddress}`}
+              href={`https://explorer.burnt.com/xion-testnet-1/account/${txHash}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: '#2196F3', textDecoration: 'none' }}

@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
+/* Update Google Fonts import */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&family=Share+Tech+Mono&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&display=swap');
+
+
+
+
+/* new css ends here */
+
 .auth-container {
     display: flex;
     flex-direction: column;
@@ -18,7 +28,7 @@
     text-align: center;
     letter-spacing: 2px;
     text-transform: uppercase;
-    animation: glowing-text 1.5s infinite alternate;
+    /* animation: glowing-text 1.5s infinite alternate; */
 }
 
 /* Glowing animation */
@@ -36,18 +46,71 @@
     }
 }
 
+/* .log {
+    margin-top: -50px;
+} */
 
 
 .typed-text {
-    font-size: 30px;
-    margin-bottom: 40px;
+    font-size: 2.5rem;
+    margin: 2rem auto;
     color: #00f9ff;
-    white-space: nowrap;
-    font-family: 'Roboto', sans-serif; 
-    overflow: hidden;
+    font-family: 'Orbitron', sans-serif; 
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 
+        0 0 10px #00f9ff,
+        0 0 20px #00f9ff,
+        0 0 40px #ff00e6;
+    position: relative;
     width: max-content;
-    max-width: 100%;
-    display: inline-block;
+    max-width: 90%;
+    animation: glitch-effect 3s infinite alternate;
+}
+
+/* Alien Glitch Effect */
+@keyframes glitch-effect {
+    0%, 100% { 
+        transform: translate(0);
+        text-shadow: 
+            0 0 10px #00f9ff,
+            0 0 20px #00f9ff,
+            0 0 40px #ff00e6;
+    }
+    25% {
+        transform: translate(-2px, 2px);
+        text-shadow: 
+            0 0 10px #ff00e6,
+            0 0 20px #ff00e6,
+            0 0 40px #00f9ff;
+    }
+    50% {
+        transform: translate(2px, -2px);
+        text-shadow: 
+            0 0 10px #00f9ff,
+            0 0 20px #ff00e6,
+            0 0 40px #ff00e6;
+    }
+    75% {
+        transform: translate(3px, 1px);
+        text-shadow: 
+            0 0 10px #ff00e6,
+            0 0 20px #00f9ff,
+            0 0 40px #00f9ff;
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .typed-text {
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+        text-shadow: 
+            0 0 5px #00f9ff,
+            0 0 15px #00f9ff,
+            0 0 25px #ff00e6;
+    }
 }
 
 .get-started {
@@ -57,11 +120,100 @@
     width: 100%;
 }
 
+/* ALIEN INPUT STYLES */
+.auth-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 15px;
+    margin: 15px 5px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.1rem;
+    color: #00f9ff;
+    background-color: rgba(0, 10, 20, 0.7);
+    border: 2px solid #00f9ff;
+    border-radius: 25px 0 25px 0;
+
+    box-shadow: 
+        0 0 10px rgba(0, 249, 255, 0.3),
+        inset 0 0 10px rgba(0, 249, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Glowing focus effect */
+.auth-input:focus {
+    border-color: #ff00e6;
+    box-shadow: 
+        0 0 15px rgba(255, 0, 230, 0.5),
+        inset 0 0 15px rgba(255, 0, 230, 0.3);
+    transform: scale(1.02);
+}
+
+/* Placeholder styling */
+.auth-input::placeholder {
+    color: rgba(0, 249, 255, 0.5);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Input hover effect */
+.auth-input:hover {
+    box-shadow: 
+        0 0 15px rgba(0, 249, 255, 0.5),
+        inset 0 0 15px rgba(0, 249, 255, 0.3);
+}
+
+/* Alien input animation */
+.auth-input {
+    animation: input-pulse 4s infinite alternate;
+}
+
+@keyframes input-pulse {
+    0% {
+        border-color: #00f9ff;
+        box-shadow: 
+            0 0 10px rgba(0, 249, 255, 0.3),
+            inset 0 0 10px rgba(0, 249, 255, 0.2);
+    }
+    50% {
+        border-color: #ff00e6;
+        box-shadow: 
+            0 0 15px rgba(255, 0, 230, 0.4),
+            inset 0 0 15px rgba(255, 0, 230, 0.3);
+    }
+    100% {
+        border-color: #00f9ff;
+        box-shadow: 
+            0 0 10px rgba(0, 249, 255, 0.3),
+            inset 0 0 10px rgba(0, 249, 255, 0.2);
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .auth-input {
+        padding: 10px 12px;
+        font-size: 1rem;
+        max-width: 90%;
+    }
+}
+
+.justImg {
+    width: 200px;
+    height: 200px;
+}
+
 
 .image-container {
-    width: 250px;
-    height: 250px;
-    margin-bottom: 20px;
+    /* width: 250px;
+    height: 250px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* margin-bottom: 20px; */
     transition: opacity 1s ease;
 }
 
