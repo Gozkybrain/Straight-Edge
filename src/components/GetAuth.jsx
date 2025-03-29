@@ -39,9 +39,7 @@ const GetAuth = ({
       <h3 className="tap-tap">Straight Edge</h3>
       <div className="typed-text">{text}</div>
       
-      <div>
-        {/* <h2 className='log'>{isRegistering ? 'Register' : 'Login'}</h2> */}
-        
+      <div className='auth-form-cover'>
      <div>
           <div className='log'>Email:</div>
           <input
@@ -74,7 +72,7 @@ const GetAuth = ({
           className="toggle-auth"
           onClick={() => setIsRegistering(!isRegistering)}
         >
-          {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
+          {isRegistering ? 'Have an account? Login' : 'Need an account? Register'}
         </button>
       </div>
     </div>
