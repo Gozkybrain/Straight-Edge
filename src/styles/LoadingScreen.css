@@ -1,32 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
 .loading-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  justify-content: center;
+  /* background: rgba(0, 5, 10, 0.95); */
+  padding: 15px 20px;
+}
+
+.loading-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 60px);
+  grid-template-rows: repeat(2, 60px);
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.loading-box {
+  width: 100%;
+  height: 100%;
+  background: #00f9ff;
+  border: 1px solid #ff00e6;
+  opacity: 0.2;
+  animation: blink 1.6s infinite ease-in-out;
+  box-shadow: 
+    0 0 5px #00f9ff,
+    inset 0 0 5px #ff00e6;
+}
+
+.loading-box:nth-child(1) { animation-delay: 0s }
+.loading-box:nth-child(2) { animation-delay: 0.4s }
+.loading-box:nth-child(3) { animation-delay: 0.8s }
+.loading-box:nth-child(4) { animation-delay: 1.2s }
+
+@keyframes blink {
+  0%, 100% { 
+    opacity: 0.2; 
+    transform: scale(0.95); 
   }
-  
-  .loading-message {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+  50% { 
+    opacity: 1; 
+    transform: scale(1.05); 
+    box-shadow: 
+      0 0 20px #00f9ff,
+      inset 0 0 10px #ff00e6;
+    border-color: #00f9ff;
   }
-  
-  .loading-submessage {
-    color: #666;
-    margin-top: 10px;
-  }
-  
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-top: 20px;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
+
+.loading-message {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700; 
+  font-size: 1.8rem;
+  color: #00f9ff;
+  margin-top: 25px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 
+    0 0 10px #00f9ff,
+    0 0 20px rgba(0, 249, 255, 0.5);
+  animation: text-pulse 2s infinite alternate;
+}
+
+.loading-submessage {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  color: #00f9ff;
+  margin-top: 15px;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(255, 0, 230, 0.7);
+}
+
+@keyframes text-pulse {
+  from { opacity: 0.8; }
+  to { opacity: 1; text-shadow: 0 0 15px #00f9ff; }
+}
