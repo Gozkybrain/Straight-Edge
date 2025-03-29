@@ -1,135 +1,66 @@
-// App.jsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth, db } from './lib/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, updateDoc, increment, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
+import GetAuth from './components/GetAuth';
+import GetUser from './components/GetUser';
+import MnemonicModal from './components/MnemonicModal';
+import LoadingScreen from './components/LoadingScreen';
+import {
+  handleRegister,
+  handleLogin,
+  handleLogout,
+  handleTap,
+  checkBalance,
+  handleClaim,
+  generateUserWallet
+} from './lib/logic';
+import './styles/App.css';
 
 // Configuration
 const XION_CONFIG = {
-  rpcEndpoint: "https://rpc.xion-testnet-1.burnt.com:443",
-  chainId: "xion-testnet-1",
-  denom: "uxion",
-  gasPrice: GasPrice.fromString("0.025uxion"),
-  treasuryAddress: "xion1y3mc9j767lmnc0fx3jl6zur0klprmywth45evd"
+  rpcEndpoint: import.meta.env.VITE_XION_RPC,
+  chainId: import.meta.env.VITE_XION_CHAIN_ID,
+  denom: import.meta.env.VITE_XION_DENOM,
+  gasPrice: GasPrice.fromString(import.meta.env.VITE_XION_GAS_PRICE),
+  treasuryAddress: import.meta.env.VITE_TREASURY_ADDRESS
 };
 
-// Initialize Xion Client
-const initXionClient = async () => {
+async function initXionClient() {
   try {
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
+      import.meta.env.VITE_TREASURY_MNEMONIC,
+      { prefix: "xion" }
+    );
+    
     const client = await SigningStargateClient.connectWithSigner(
       XION_CONFIG.rpcEndpoint,
-      null, // No signer needed for read-only
+      wallet,
       {
         gasPrice: XION_CONFIG.gasPrice,
         prefix: "xion"
       }
     );
-    return {
-      client,
-      isMock: false
-    };
+    
+    await client.getChainId();
+    return { client, isMock: false };
   } catch (error) {
-    console.error("Xion Connection Error:", error);
+    console.error("Connection failed:", error);
     return {
       client: {
         sendTokens: () => Promise.resolve({
           code: 0,
           transactionHash: '0xmock-' + Math.random().toString(16).slice(2)
-        })
+        }),
+        getAllBalances: () => Promise.resolve([])
       },
       isMock: true
     };
   }
-};
+}
 
-// Generate new wallet for user
-const generateUserWallet = async () => {
-  const wallet = await DirectSecp256k1HdWallet.generate(12, { prefix: "xion" });
-  const [account] = await wallet.getAccounts();
-  return {
-    address: account.address,
-    mnemonic: wallet.mnemonic
-  };
-};
-
-// MnemonicModal component
-const MnemonicModal = ({ mnemonic, onClose }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(mnemonic);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '8px',
-        maxWidth: '500px',
-        width: '90%'
-      }}>
-        <h3>Save Your Recovery Phrase</h3>
-        <p style={{ color: 'red', fontWeight: 'bold' }}>
-          This is the ONLY time you'll see this. Save it securely!
-        </p>
-        <div style={{
-          padding: '15px',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '4px',
-          margin: '15px 0',
-          wordBreak: 'break-all'
-        }}>
-          {mnemonic}
-        </div>
-        <button
-          onClick={handleCopy}
-          style={{
-            padding: '8px 15px',
-            backgroundColor: copied ? '#4CAF50' : '#2196F3',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginRight: '10px'
-          }}
-        >
-          {copied ? 'Copied!' : 'Copy to Clipboard'}
-        </button>
-        <button
-          onClick={onClose}
-          style={{
-            padding: '8px 15px',
-            backgroundColor: '#f44336',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          I've Saved It
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default function TapGame() {
+function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -141,8 +72,8 @@ export default function TapGame() {
   const [xionClient, setXionClient] = useState(null);
   const [showMnemonic, setShowMnemonic] = useState(false);
   const [tempMnemonic, setTempMnemonic] = useState('');
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // Initialize Xion connection
   useEffect(() => {
     initXionClient().then(({ client, isMock }) => {
       setXionClient(client);
@@ -151,171 +82,52 @@ export default function TapGame() {
     });
   }, []);
 
-  const handleRegister = async () => {
-    try {
-      setStatus('Creating account...');
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          setStatus('Loading user data...');
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          const docSnap = await getDoc(userRef);
 
-      // 1. Generate Xion wallet
-      const { address, mnemonic } = await generateUserWallet();
+          if (docSnap.exists()) {
+            setUser({
+              ...docSnap.data(),
+              uid: firebaseUser.uid
+            });
+            setStatus('Ready');
+          } else {
+            setStatus('User data not found');
+            await signOut(auth);
+          }
+        } catch (error) {
+          setStatus(`Error loading user: ${error.message}`);
+        }
+      }
+      setCheckingAuth(false);
+    });
 
-      // 2. Create Firebase user
-      const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password);
-
-      // 3. Save user data in users/xion/{uid} (without mnemonic)
-      const userRef = doc(db, 'users', firebaseUser.uid);
-      await setDoc(userRef, {
-        email: firebaseUser.email,
-        xionAddress: address,
-        balance: 0,
-        pendingPoints: 0,
-        createdAt: new Date().toISOString()
-      });
-
-      setUser({
-        email: firebaseUser.email,
-        xionAddress: address,
-        uid: firebaseUser.uid
-      });
-
-      setStatus('Account created!');
-      // Show mnemonic in modal
-      setTempMnemonic(mnemonic);
-      setShowMnemonic(true);
-
-    } catch (error) {
-      setStatus(`Registration Error: ${error.message}`);
-    }
-  };
+    return () => unsubscribe();
+  }, []);
 
   const handleCloseMnemonic = () => {
     setShowMnemonic(false);
-    setTempMnemonic(''); // Clear from memory
-  };
-
-  const handleLogin = async () => {
-    try {
-      setStatus('Logging in...');
-      const { user: firebaseUser } = await signInWithEmailAndPassword(auth, email, password);
-
-      // Get user data from users/xion/{uid}
-      const userRef = doc(db, 'users', firebaseUser.uid);
-      const docSnap = await getDoc(userRef);
-
-      if (!docSnap.exists()) {
-        throw new Error("No account found. Please register.");
-      }
-
-      setUser({
-        ...docSnap.data(),
-        uid: firebaseUser.uid
-      });
-      setStatus('Ready');
-    } catch (error) {
-      setStatus(`Login Error: ${error.message}`);
-    }
-  };
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    setUser(null);
-    setPoints(0);
-    setTxHash('');
-  };
-
-  const handleTap = async () => {
-    const userRef = doc(db, 'users', user.uid);
-    await updateDoc(userRef, {
-      pendingPoints: increment(1)
-    });
-    setPoints(p => p + 1);
-  };
-
-  const checkBalance = async () => {
-    try {
-      if (!user?.xionAddress) {
-        setStatus("No Xion address found");
-        return;
-      }
-
-      setStatus("Fetching balance...");
-
-      // Connect to the Xion Testnet
-      const client = await SigningStargateClient.connect(XION_CONFIG.rpcEndpoint);
-
-      // Fetch balance for the user's address
-      const balances = await client.getAllBalances(user.xionAddress);
-
-      // Find UXION balance
-      const uxionBalance = balances.find(balance => balance.denom === XION_CONFIG.denom);
-
-      if (uxionBalance) {
-        setStatus(`Balance: ${uxionBalance.amount} ${XION_CONFIG.denom}`);
-      } else {
-        setStatus("No UXION balance found.");
-      }
-    } catch (error) {
-      setStatus(`Balance Check Error: ${error.message}`);
-    }
-  };
-
-
-
-  const handleClaim = async () => {
-    try {
-      if (!user?.xionAddress) {
-        throw new Error("No Xion address found");
-      }
-
-      setStatus(isMock ? 'Simulating...' : 'Processing...');
-
-      // Send from treasury to user
-      const result = await xionClient.sendTokens(
-        XION_CONFIG.treasuryAddress,
-        user.xionAddress,
-        [{ denom: XION_CONFIG.denom, amount: (points * 1000000).toString() }],
-        {
-          amount: [{ denom: XION_CONFIG.denom, amount: "1000" }], // Small fee
-          gas: "200000"
-        }
-      );
-
-      // Update balances
-      const userRef = doc(db, 'users', user.uid);
-      await updateDoc(userRef, {
-        balance: increment(points),
-        pendingPoints: increment(-points)
-      });
-
-      setTxHash(result.transactionHash);
-      setPoints(0);
-      setStatus('Transaction confirmed!');
-    } catch (error) {
-      setStatus(`Transaction Error: ${error.message}`);
-    }
+    setTempMnemonic('');
   };
 
   if (status.startsWith('Connecting')) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        flexDirection: 'column'
-      }}>
-        <div>{status}</div>
-        {isMock && <div style={{ marginTop: '10px', color: '#666' }}>Will use mock mode if connection fails</div>}
-      </div>
-    );
+    return <LoadingScreen 
+      message={status} 
+      subMessage={isMock ? "Will use mock mode if connection fails" : null} 
+    />;
+  }
+
+  if (checkingAuth) {
+    return <LoadingScreen message="Checking authentication... Please wait" />;
   }
 
   return (
-    <div style={{
-      maxWidth: '600px',
-      margin: '0 auto',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div className="app-container">
       {showMnemonic && (
         <MnemonicModal
           mnemonic={tempMnemonic}
@@ -323,164 +135,55 @@ export default function TapGame() {
         />
       )}
 
-      {status !== 'Ready' && !status.startsWith('Connecting') && (
-        <div style={{
-          padding: '10px',
-          marginBottom: '20px',
-          background: status.startsWith('Error') ? '#ffebee' : '#e3f2fd',
-          color: status.startsWith('Error') ? '#d32f2f' : '#1565c0',
-          borderRadius: '4px'
-        }}>
+      {status && !status.startsWith('Connecting') && (
+        <div className={`status-message ${status.startsWith('Error') ? 'error' : 'info'}`}>
           {status}
         </div>
       )}
 
       {!user ? (
-        <div>
-          <h2 style={{ color: '#333', marginBottom: '20px' }}>
-            {isRegistering ? 'Register' : 'Login'}
-          </h2>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            style={{
-              width: '100%',
-              padding: '10px',
-              margin: '10px 0',
-              border: '1px solid #ddd',
-              borderRadius: '4px'
-            }}
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            style={{
-              width: '100%',
-              padding: '10px',
-              margin: '10px 0',
-              border: '1px solid #ddd',
-              borderRadius: '4px'
-            }}
-          />
-          <button
-            onClick={isRegistering ? handleRegister : handleLogin}
-            style={{
-              width: '100%',
-              padding: '10px',
-              background: '#2196F3',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-            disabled={status.includes('Connecting')}
-          >
-            {status.includes('Connecting') ? 'Loading...' : isRegistering ? 'Register' : 'Login'}
-          </button>
-
-          <div style={{ marginTop: '10px', textAlign: 'center' }}>
-            <button
-              onClick={() => setIsRegistering(!isRegistering)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#2196F3',
-                cursor: 'pointer'
-              }}
-            >
-              {isRegistering ? 'Already have an account? Login' : 'Need an account? Register'}
-            </button>
-          </div>
-        </div>
+        <GetAuth 
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          isRegistering={isRegistering}
+          setIsRegistering={setIsRegistering}
+          handleRegister={() => handleRegister(
+            email, 
+            password, 
+            setUser, 
+            setStatus, 
+            setTempMnemonic, 
+            setShowMnemonic
+          )}
+          handleLogin={() => handleLogin(email, password, setStatus)}
+          status={status}
+        />
       ) : (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <h2 style={{ color: '#333' }}>Welcome, {user.email}</h2>
-            <button onClick={checkBalance} style={{ marginTop: '10px', padding: '8px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              Check Balance for wallet
-            </button>
-
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: '5px 10px',
-                background: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Logout
-            </button>
-          </div>
-
-          <p style={{ wordBreak: 'break-all', fontSize: '0.9em', color: '#555' }}>
-            Xion Address: {user.xionAddress}
-          </p>
-          {isMock ? (
-            <p style={{ color: '#ff9800' }}>⚠️ Using mock mode</p>
-          ) : (
-            <p style={{ color: '#4CAF50' }}>✔️ Connected to Xion Testnet</p>
+        <GetUser 
+          user={user}
+          points={points}
+          txHash={txHash}
+          isMock={isMock}
+          status={status}
+          handleLogout={() => handleLogout(setUser, setPoints, setTxHash, setStatus)}
+          handleTap={() => handleTap(user, points, setPoints)}
+          handleClaim={() => handleClaim(
+            user, 
+            points, 
+            xionClient, 
+            XION_CONFIG, 
+            setTxHash, 
+            setPoints, 
+            setStatus, 
+            isMock
           )}
-
-          <div style={{ margin: '20px 0', padding: '15px', background: '#f9f9f9', borderRadius: '8px' }}>
-            <p>Pending Points: {points}</p>
-            <button
-              onClick={handleTap}
-              style={{
-                width: '100%',
-                padding: '10px',
-                background: '#2196F3',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Tap to Earn
-            </button>
-          </div>
-
-          <div style={{ margin: '20px 0' }}>
-            <button
-              onClick={handleClaim}
-              disabled={points === 0 || isMock}
-              style={{
-                width: '100%',
-                padding: '10px',
-                background: points === 0 ? '#cccccc' : isMock ? '#ff9800' : '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: points === 0 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {isMock ? 'Enable Real Mode to Claim' : `Claim ${points} Points`}
-            </button>
-          </div>
-
-          {txHash && (
-            <div style={{ marginTop: '20px', padding: '15px', background: '#f5f5f5', borderRadius: '8px' }}>
-              <p>Transaction Hash: {txHash}</p>
-              {!isMock && (
-                <a
-                  href={`https://explorer.burnt.com/xion-testnet-1/account/${user.xionAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: '#2196F3', textDecoration: 'none' }}
-                >
-                  View on Explorer
-                </a>
-              )}
-            </div>
-          )}
-        </div>
+          checkBalance={() => checkBalance(user, XION_CONFIG, setStatus)}
+        />
       )}
     </div>
   );
 }
+
+export default App;
