@@ -8,11 +8,11 @@ import { SigningStargateClient, GasPrice } from '@cosmjs/stargate';
 
 // Configuration
 const XION_CONFIG = {
-  rpcEndpoint: "https://xion-rpc.polkachu.com",
-  chainId: "xion-testnet-2",
+  rpcEndpoint: "https://rpc.xion-testnet-1.burnt.com:443",
+  chainId: "xion-testnet-1",
   denom: "uxion",
   gasPrice: GasPrice.fromString("0.025uxion"),
-  treasuryAddress: "xion1ck6xmvxpfqldnczcpkky9xzt6txfc0jxufnxws" // Your treasury address
+  treasuryAddress: "xion1y3mc9j767lmnc0fx3jl6zur0klprmywth45evd"
 };
 
 // Initialize Xion Client
@@ -469,7 +469,7 @@ export default function TapGame() {
               <p>Transaction Hash: {txHash}</p>
               {!isMock && (
                 <a
-                  href={`https://explorer.xion-testnet.burnt.com/tx/${txHash}`}
+                  href={`https://explorer.burnt.com/xion-testnet-1/account/${user.xionAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: '#2196F3', textDecoration: 'none' }}
