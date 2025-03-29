@@ -17,9 +17,9 @@ const GetAuth = ({
   
   const displayDuration = 5000;
   const texts = [
-    "Hello Sarcastic Geek Trybe,",
-    "Ready to Tap Tap?",
-    "Tap Tap to win!"
+    "Sarcastic Geek Trybe,",
+    "Ready to Play Edge?",
+    "100% Secure, LFG! 🚀"
   ];
 
   useEffect(() => {
@@ -39,31 +39,35 @@ const GetAuth = ({
       <h3 className="tap-tap">Straight Edge</h3>
       <div className="typed-text">{text}</div>
       
-      <div className="log">
-        <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+      <div>
+        {/* <h2 className='log'>{isRegistering ? 'Register' : 'Login'}</h2> */}
         
-        <input
-          type="email"
-          className="auth-input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-        />
-        
-        <input
-          type="password"
-          className="auth-input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-        />
+     <div>
+          <div className='log'>Email:</div>
+          <input
+            type="email"
+            className="auth-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="johndoe@xion.com"
+          />
+          
+          <div className='log'>Password:</div>
+          <input
+            type="password"
+            className="auth-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="********"
+          />
+     </div>
         
         <button
           className="auth-button"
           onClick={isRegistering ? handleRegister : handleLogin}
           disabled={status.includes('Loading')}
         >
-          {status.includes('Loading') ? 'Please wait...' : isRegistering ? 'Register' : 'Login'}
+          {status.includes('Loading') ? 'Please wait...' : isRegistering ? 'Register Account' : 'Login Account'}
         </button>
   
         <button

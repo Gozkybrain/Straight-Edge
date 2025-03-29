@@ -1,14 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
-/* Update Google Fonts import */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&family=Share+Tech+Mono&display=swap');
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&display=swap');
-
-
-
-
-/* new css ends here */
 
 .auth-container {
     display: flex;
@@ -18,7 +12,7 @@
 }
 
 .tap-tap {
-    font-size: 35px;
+    font-size: 45px;
     font-weight: bold;
     color: transparent;
     font-family: 'Roboto', sans-serif; 
@@ -46,14 +40,10 @@
     }
 }
 
-/* .log {
-    margin-top: -50px;
-} */
-
 
 .typed-text {
-    font-size: 2.5rem;
-    margin: 2rem auto;
+    font-size: 25px;
+    margin: 10px auto;
     color: #00f9ff;
     font-family: 'Orbitron', sans-serif; 
     text-align: center;
@@ -69,7 +59,6 @@
     animation: glitch-effect 3s infinite alternate;
 }
 
-/* Alien Glitch Effect */
 @keyframes glitch-effect {
     0%, 100% { 
         transform: translate(0);
@@ -101,16 +90,13 @@
     }
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .typed-text {
-        font-size: 1.8rem;
-        letter-spacing: 3px;
-        text-shadow: 
-            0 0 5px #00f9ff,
-            0 0 15px #00f9ff,
-            0 0 25px #ff00e6;
-    }
+.log {
+    text-align: left;
+    margin-top: 10px;
+    margin-left: 35px;
+    font-size: 18px;
+    color: #00f9ff;
+    font-family: 'Orbitron', sans-serif; 
 }
 
 .get-started {
@@ -120,11 +106,10 @@
     width: 100%;
 }
 
-/* ALIEN INPUT STYLES */
 .auth-input {
     width: 100%;
     max-width: 400px;
-    padding: 12px 15px;
+    padding: 15px 15px;
     margin: 15px 5px;
     font-family: 'Share Tech Mono', monospace;
     font-size: 1.1rem;
@@ -142,7 +127,6 @@
     outline: none;
 }
 
-/* Glowing focus effect */
 .auth-input:focus {
     border-color: #ff00e6;
     box-shadow: 
@@ -151,7 +135,6 @@
     transform: scale(1.02);
 }
 
-/* Placeholder styling */
 .auth-input::placeholder {
     color: rgba(0, 249, 255, 0.5);
     font-style: italic;
@@ -159,14 +142,12 @@
     letter-spacing: normal;
 }
 
-/* Input hover effect */
 .auth-input:hover {
     box-shadow: 
         0 0 15px rgba(0, 249, 255, 0.5),
         inset 0 0 15px rgba(0, 249, 255, 0.3);
 }
 
-/* Alien input animation */
 .auth-input {
     animation: input-pulse 4s infinite alternate;
 }
@@ -192,15 +173,6 @@
     }
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .auth-input {
-        padding: 10px 12px;
-        font-size: 1rem;
-        max-width: 90%;
-    }
-}
-
 .justImg {
     width: 200px;
     height: 200px;
@@ -208,12 +180,9 @@
 
 
 .image-container {
-    /* width: 250px;
-    height: 250px; */
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* margin-bottom: 20px; */
     transition: opacity 1s ease;
 }
 
@@ -222,6 +191,26 @@
     opacity: 0;
     transition: opacity 1s ease-out;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .typed-text {
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+        text-shadow: 
+            0 0 5px #00f9ff,
+            0 0 15px #00f9ff,
+            0 0 25px #ff00e6;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .auth-input {
+        max-width: 90%;
+    }
+}
+
 
 @media (max-width: 500px) {
     .tap-tap {
