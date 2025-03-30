@@ -6,16 +6,13 @@
   "scripts": {
     "setup": "npm i && dfx canister create tap-tap-backend && dfx generate tap-tap-backend && dfx deploy",
     "start": "vite --port 3000",
-    "prebuild": "dfx generate",
     "build": "tsc && vite build",
     "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\""
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.33.1",
     "@cosmjs/stargate": "^0.33.1",
-    "@dfinity/agent": "^1.4.0",
     "@dfinity/candid": "^1.4.0",
-    "@dfinity/principal": "^1.4.0",
     "axios": "^1.8.4",
     "bip39": "^3.1.0",
     "firebase": "^11.5.0",
