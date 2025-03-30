@@ -117,12 +117,12 @@ const GetUser = ({
       {/* Status Indicator - Shows success for 5 sec then returns to normal */}
       {showTxSuccess ? (
         <p className="status-indicator status-success">
-          ✔️ Transaction Confirmed! Returning to normal...
+          🚀 Transaction Confirmed! Returning to normal...
         </p>
       ) : isMock ? (
         <p className="status-indicator status-mock">⚠️ Using mock mode</p>
       ) : (
-        <p className="status-indicator status-connected">✔️ Connected to Xion Testnet</p>
+        <p className="status-indicator status-connected">🚀 Connected to Xion Testnet</p>
       )}
 
       {/* Cooldown Indicator */}
