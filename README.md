@@ -1,6 +1,6 @@
 # Straight Edge on Xion
 
-<!-- ![Xion Network Logo](./src/images/cover-art.png) -->
+![Xion Network Logo](./src/images/cover-art.png)
 
 ## Project Overview
 A lightweight, gamified DApp built on Xion Network that rewards users with testnet tokens for simple interactions. The vision for `Straight Edge` from [The Sarcastic Geeks Trybe 🚀](https://x.com/sarcasticgeek4u) is to onboard as many users to xion network using the easiest onchain gaming, leveraging the surge that telegram gaming had enjoyed in the past as a result of the web2 authentication.
