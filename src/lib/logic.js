@@ -1,13 +1,18 @@
 import { auth, db } from './firebase';
-import { doc, updateDoc, increment, getDoc, setDoc } from 'firebase/firestore';
+import { doc, updateDoc, increment, setDoc } from 'firebase/firestore';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
 import {
     signOut,
-    signInWithEmailAndPassword,  // Add this import
-    createUserWithEmailAndPassword  // Also add this if not already present
-} from 'firebase/auth'; // Add this import
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword  
+} from 'firebase/auth'; 
 
+
+/**
+ * Generates a new XION wallet for the user
+ * @returns {Object} Wallet address and mnemonic phrase
+ */
 
 export const generateUserWallet = async () => {
   const wallet = await DirectSecp256k1HdWallet.generate(12, { prefix: "xion" });
@@ -18,12 +23,21 @@ export const generateUserWallet = async () => {
   };
 };
 
+
+/**
+ * Handles user registration flow:
+ * 1. Creates XION wallet
+ * 2. Creates Firebase auth user
+ * 3. Saves user data to Firestore
+ * 4. Shows mnemonic phrase
+ */
 export const handleRegister = async (email, password, setUser, setStatus, setTempMnemonic, setShowMnemonic) => {
   try {
     setStatus('Creating account...');
     const { address, mnemonic } = await generateUserWallet();
     const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password);
 
+        // Save user data to Firestore
     const userRef = doc(db, 'users', firebaseUser.uid);
     await setDoc(userRef, {
       email: firebaseUser.email,
@@ -47,6 +61,10 @@ export const handleRegister = async (email, password, setUser, setStatus, setTem
   }
 };
 
+
+/**
+ * Handles user login with email/password
+ */
 export const handleLogin = async (email, password, setStatus) => {
   try {
     setStatus('Logging in...');
@@ -56,6 +74,10 @@ export const handleLogin = async (email, password, setStatus) => {
   }
 };
 
+
+/**
+ * Handles user logout and resets app state
+ */
 export const handleLogout = async (setUser, setPoints, setTxHash, setStatus) => {
   await signOut(auth);
   setUser(null);
@@ -64,6 +86,10 @@ export const handleLogout = async (setUser, setPoints, setTxHash, setStatus) => 
   setStatus('Ready');
 };
 
+
+/**
+ * Increments user's points in Firestore and local state
+ */
 export const handleTap = async (user, points, setPoints) => {
   if (!user) return;
   
@@ -78,6 +104,9 @@ export const handleTap = async (user, points, setPoints) => {
   }
 };
 
+/**
+ * Checks XION blockchain for user's token balance
+ */
 export const checkBalance = async (user, XION_CONFIG, setStatus) => {
   if (!user?.xionAddress) {
     setStatus("No Xion address found");
@@ -98,13 +127,16 @@ export const checkBalance = async (user, XION_CONFIG, setStatus) => {
     if (balance) {
       setStatus(`Balance: ${balance.amount} ${balance.denom}`);
     } else {
-      setStatus("No balance found");
+      setStatus("Zero Balance");
     }
   } catch (error) {
-    setStatus(`Balance check failed: ${error.message}`);
+    setStatus(`No Balance Found`);
   }
 };
 
+/**
+ * Sends collected points to blockchain
+ */
 export const handleClaim = async (user, points, xionClient, XION_CONFIG, setTxHash, setPoints, setStatus, isMock) => {
   if (!user?.xionAddress || points === 0) return;
 
