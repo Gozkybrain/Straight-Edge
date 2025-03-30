@@ -23,6 +23,13 @@
 .user-email {
   color: #00f9ff;
   text-shadow: 0 0 10px rgba(0, 249, 255, 0.5);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  display: inline-block;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .xion-address {
@@ -288,5 +295,9 @@
 
   .points-display {
     display: none;
+  }
+
+  .user-email {
+    font-size: 19px;
   }
 }
