@@ -20,6 +20,7 @@ const GetUser = ({
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [showTxSuccess, setShowTxSuccess] = useState(false);
 
+  
   // Effect to show transaction success for 5 seconds
   useEffect(() => {
     if (txHash) {
