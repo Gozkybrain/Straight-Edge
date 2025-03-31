@@ -127,6 +127,7 @@ function App() {
       setCheckingAuth(false);
     });
 
+    
     return () => unsubscribe();
   }, [currentRpc, isMock]);
 
