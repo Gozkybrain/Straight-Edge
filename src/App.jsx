@@ -18,8 +18,14 @@ import {
 import './styles/App.css';
 
 // Configuration
+const getRandomRpc = () => {
+  const rpcs = import.meta.env.VITE_XION_RPCS?.split(',') || [import.meta.env.VITE_XION_RPC];
+  return rpcs[Math.floor(Math.random() * rpcs.length)];
+};
+
+
 const XION_CONFIG = {
-  rpcEndpoint: import.meta.env.VITE_XION_RPC,
+  rpcEndpoint: getRandomRpc(),
   chainId: import.meta.env.VITE_XION_CHAIN_ID,
   denom: import.meta.env.VITE_XION_DENOM,
   gasPrice: GasPrice.fromString(import.meta.env.VITE_XION_GAS_PRICE),
