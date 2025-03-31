@@ -74,6 +74,16 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [currentRpc, setCurrentRpc] = useState(RPC_ENDPOINTS[0].url);
 
+
+  const XION_CONFIG = {
+    rpcEndpoint: currentRpc,
+    chainId: import.meta.env.VITE_XION_CHAIN_ID || 'xion-testnet-1',
+    denom: import.meta.env.VITE_XION_DENOM || 'uxion',
+    gasPrice: import.meta.env.VITE_XION_GAS_PRICE || '0.025uxion',
+    treasuryAddress: import.meta.env.VITE_TREASURY_ADDRESS
+  };
+
+  
   // Initialize blockchain connection
   useEffect(() => {
     const connect = async () => {
@@ -196,25 +206,25 @@ function App() {
         />
       ) : (
         <GetUser
-          user={user}
-          points={points}
-          txHash={txHash}
-          isMock={isMock}
-          status={status}
-          handleLogout={() => handleLogout(setUser, setPoints, setTxHash, setStatus)}
-          handleTap={() => handleTap(user, points, setPoints)}
-          handleClaim={() => handleClaim(
-            user,
-            points,
-            xionClient,
-            { ...XION_CONFIG, rpcEndpoint: currentRpc },
-            setTxHash,
-            setPoints,
-            setStatus,
-            isMock
-          )}
-          checkBalance={() => checkBalance(user, { ...XION_CONFIG, rpcEndpoint: currentRpc }, setStatus)}
-        />
+  user={user}
+  points={points}
+  txHash={txHash}
+  isMock={isMock}
+  status={status}
+  handleLogout={() => handleLogout(setUser, setPoints, setTxHash, setStatus)}
+  handleTap={() => handleTap(user, points, setPoints)}
+  handleClaim={() => handleClaim(
+    user,
+    points,
+    xionClient,
+    XION_CONFIG, // Make sure this is defined in your App.jsx
+    setTxHash,
+    setPoints,
+    setStatus,
+    isMock
+  )}
+  checkBalance={() => checkBalance(user, XION_CONFIG, setStatus)}
+/>
       )}
     </div>
   );

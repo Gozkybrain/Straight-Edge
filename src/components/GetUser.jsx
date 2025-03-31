@@ -77,11 +77,16 @@ const GetUser = ({
   };
 
 
-  // Handles claim action with loading state
-  const handleClaimWithModal = async () => {
+   // Updated claim handler with proper error handling
+   const handleClaimWithModal = async () => {
+    if (points === 0 || isMock || isClaiming) return;
+    
     setIsClaiming(true);
     try {
-      await handleClaim();
+      const result = await handleClaim();
+      if (result && result.error) {
+        console.error("Claim failed:", result.error);
+      }
     } catch (error) {
       console.error("Claim error:", error);
     } finally {
