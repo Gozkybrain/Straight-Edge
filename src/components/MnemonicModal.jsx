@@ -1,40 +1,38 @@
 import { useState } from 'react';
 import '../styles/MnemonicModal.css';
 
-const MnemonicModal = ({ mnemonic, onClose }) => {
-  const [copied, setCopied] = useState(false);
+const AccountConfirmationModal = ({ onClose }) => {
+  const [buttonText, setButtonText] = useState('Close');
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(mnemonic);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleClose = () => {
+    setButtonText('Closing...');
+    setTimeout(() => {
+      onClose();
+      setButtonText('Close');
+    }, 500);
   };
 
   return (
     <div className="mnemonic-modal-overlay">
       <div className="mnemonic-modal-content">
-        <h3 className="mnemonic-modal-title">Save Your Recovery Phrase</h3>
-        <p className="mnemonic-warning">
-          This is the ONLY time you'll see this. Save it securely!
-        </p>
+        <h3 className="mnemonic-modal-title">Account Created Successfully!</h3>
+        
         <div className="mnemonic-display">
-          {mnemonic}
+          <div className="success-message">
+            <p>✅ You can always login using your email and password</p>
+            <p>🔐 Your account is securely managed by Xion's authentication system</p>
+          </div>
         </div>
+
         <button
-          onClick={handleCopy}
-          className={`mnemonic-button copy-button ${copied ? 'copied' : ''}`}
-        >
-          {copied ? 'Copied!' : 'Copy to Clipboard'}
-        </button>
-        <button
-          onClick={onClose}
+          onClick={handleClose}
           className="mnemonic-button confirm-button"
         >
-          I've Saved It
+          {buttonText}
         </button>
       </div>
     </div>
   );
 };
 
-export default MnemonicModal;
+export default AccountConfirmationModal;
