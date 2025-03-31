@@ -121,6 +121,12 @@ body {
 }
 
 
+.rpc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
 /* Tablet Devices (768px and below) */
 @media (max-width: 768px) {
     .app-container {
@@ -132,6 +138,12 @@ body {
         padding: 10px 15px;
         max-width: 90%;
     }
+
+    .rpc-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
 }
 
 /* Mobile Devices (480px and below) */

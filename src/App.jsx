@@ -17,17 +17,16 @@ import {
 } from './lib/logic';
 import './styles/App.css';
 
-// Configuration
-const XION_CONFIG = {
-  rpcEndpoint: import.meta.env.VITE_XION_RPC,
-  chainId: import.meta.env.VITE_XION_CHAIN_ID,
-  denom: import.meta.env.VITE_XION_DENOM,
-  gasPrice: GasPrice.fromString(import.meta.env.VITE_XION_GAS_PRICE),
-  treasuryAddress: import.meta.env.VITE_TREASURY_ADDRESS
-};
+// Available RPC endpoints
+const RPC_ENDPOINTS = [
+  { url: import.meta.env.VITE_XION_RPC, label: "Primary" },
+  { url: "https://xion-rpc.zensuite.xyz", label: "Zensuite" },
+  { url: "https://xion-rpc.polkachu.com", label: "Polkachu" },
+  { url: "https://xion-rpc.lavenderfive.com", label: "Lavender" }
+];
 
 // Initialize connection to Xion blockchain
-async function initXionClient() {
+async function initXionClient(rpcUrl) {
   try {
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
       import.meta.env.VITE_TREASURY_MNEMONIC,
@@ -35,10 +34,10 @@ async function initXionClient() {
     );
 
     const client = await SigningStargateClient.connectWithSigner(
-      XION_CONFIG.rpcEndpoint,
+      rpcUrl,
       wallet,
       {
-        gasPrice: XION_CONFIG.gasPrice,
+        gasPrice: GasPrice.fromString(import.meta.env.VITE_XION_GAS_PRICE),
         prefix: "xion"
       }
     );
@@ -73,15 +72,21 @@ function App() {
   const [showMnemonic, setShowMnemonic] = useState(false);
   const [tempMnemonic, setTempMnemonic] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [currentRpc, setCurrentRpc] = useState(RPC_ENDPOINTS[0].url);
 
   // Initialize blockchain connection
   useEffect(() => {
-    initXionClient().then(({ client, isMock }) => {
+    const connect = async () => {
+      const { client, isMock } = await initXionClient(currentRpc);
       setXionClient(client);
       setIsMock(isMock);
-      setStatus(isMock ? 'Ready (mock mode)' : 'Connected to Xion Testnet!');
-    });
-  }, []);
+      setStatus(isMock
+        ? 'Using mock mode (RPC unavailable)'
+        : `Connected to ${RPC_ENDPOINTS.find(rpc => rpc.url === currentRpc)?.label || 'Xion Testnet'}`
+      );
+    };
+    connect();
+  }, [currentRpc]);
 
   // Auth state listener
   useEffect(() => {
@@ -97,7 +102,10 @@ function App() {
               ...docSnap.data(),
               uid: firebaseUser.uid
             });
-            setStatus('Ready');
+            setStatus(isMock
+              ? 'Ready (mock mode)'
+              : `Connected to ${RPC_ENDPOINTS.find(rpc => rpc.url === currentRpc)?.label || 'Xion Testnet'}`
+            );
           } else {
             setStatus('User data not found');
             await signOut(auth);
@@ -110,15 +118,20 @@ function App() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [currentRpc, isMock]);
 
   const handleCloseMnemonic = () => {
     setShowMnemonic(false);
     setTempMnemonic('');
   };
 
+  const switchRpc = async (rpcUrl) => {
+    setStatus(`Switching to ${RPC_ENDPOINTS.find(rpc => rpc.url === rpcUrl)?.label || 'new RPC'}...`);
+    setCurrentRpc(rpcUrl);
+  };
+
   // Loading states
-  if (status.startsWith('Connecting')) {
+  if (status.startsWith('Connecting') || status.startsWith('Switching')) {
     return <LoadingScreen
       message={status}
       subMessage={isMock ? "Will use mock mode if connection fails" : null}
@@ -129,11 +142,8 @@ function App() {
     return <LoadingScreen message="Checking authentication... Please wait" />;
   }
 
-
-  // Main render
   return (
     <div className="app-container">
-      {/* Display mnemonic phrase in a modal component */}
       {showMnemonic && (
         <MnemonicModal
           mnemonic={tempMnemonic}
@@ -141,14 +151,30 @@ function App() {
         />
       )}
 
-      {/* Status message display */}
-      {status && !status.startsWith('Connecting') && (
-        <div className={`status-message ${status.startsWith('Error') ? 'error' : 'info'}`}>
+      {/* Status and RPC Controls */}
+      <div className="connection-status">
+        <div className={`status-message ${status.includes('Error') ? 'error' : 'info'}`}>
           {status}
         </div>
-      )}
 
-      {/* Conditional rendering based on auth state */}
+        {isMock && (
+          <div className="rpc-controls">
+            <p className="status-indicator status-mock">⚠️ Could not connect to Primary RPC, Select another</p>
+            <div className="rpc-buttons">
+              {RPC_ENDPOINTS.map((rpc) => (
+                <button
+                  key={rpc.url}
+                  onClick={() => switchRpc(rpc.url)}
+                  className={`claim-button ${currentRpc === rpc.url ? 'active' : ''}`}
+                >
+                  {rpc.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {!user ? (
         <GetAuth
           email={email}
@@ -181,13 +207,13 @@ function App() {
             user,
             points,
             xionClient,
-            XION_CONFIG,
+            { ...XION_CONFIG, rpcEndpoint: currentRpc },
             setTxHash,
             setPoints,
             setStatus,
             isMock
           )}
-          checkBalance={() => checkBalance(user, XION_CONFIG, setStatus)}
+          checkBalance={() => checkBalance(user, { ...XION_CONFIG, rpcEndpoint: currentRpc }, setStatus)}
         />
       )}
     </div>
