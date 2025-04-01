@@ -83,7 +83,7 @@ function App() {
     treasuryAddress: import.meta.env.VITE_TREASURY_ADDRESS
   };
 
-  
+
   // Initialize blockchain connection
   useEffect(() => {
     const connect = async () => {
@@ -127,7 +127,6 @@ function App() {
       setCheckingAuth(false);
     });
 
-    
     return () => unsubscribe();
   }, [currentRpc, isMock]);
 
@@ -207,25 +206,25 @@ function App() {
         />
       ) : (
         <GetUser
-  user={user}
-  points={points}
-  txHash={txHash}
-  isMock={isMock}
-  status={status}
-  handleLogout={() => handleLogout(setUser, setPoints, setTxHash, setStatus)}
-  handleTap={() => handleTap(user, points, setPoints)}
-  handleClaim={() => handleClaim(
-    user,
-    points,
-    xionClient,
-    XION_CONFIG, // Make sure this is defined in your App.jsx
-    setTxHash,
-    setPoints,
-    setStatus,
-    isMock
-  )}
-  checkBalance={() => checkBalance(user, XION_CONFIG, setStatus)}
-/>
+          user={user}
+          points={points}
+          txHash={txHash}
+          isMock={isMock}
+          status={status}
+          handleLogout={() => handleLogout(setUser, setPoints, setTxHash, setStatus)}
+          handleTap={() => handleTap(user, points, setPoints)}
+          handleClaim={() => handleClaim(
+            user,
+            points,
+            xionClient,
+            XION_CONFIG, // Make sure this is defined in your App.jsx
+            setTxHash,
+            setPoints,
+            setStatus,
+            isMock
+          )}
+          checkBalance={() => checkBalance(user, XION_CONFIG, setStatus)}
+        />
       )}
     </div>
   );
