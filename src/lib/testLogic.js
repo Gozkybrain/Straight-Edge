@@ -114,23 +114,35 @@ export const checkBalance = async (user, XION_CONFIG, setStatus) => {
   }
 
   try {
-    setStatus("Fetching balance...");
+    setStatus("Fetching balances...");
     const client = await SigningStargateClient.connect(XION_CONFIG.rpcEndpoint);
-    const balances = await client.getAllBalances(user.xionAddress);
     
-    const balance = balances.find(b => 
-      b.denom === XION_CONFIG.denom || 
-      b.denom === "uxion" || 
-      b.denom === "stake"
-    );
+    // Get both balances in parallel
+    const [userBalances, treasuryBalances] = await Promise.all([
+      client.getAllBalances(user.xionAddress),
+      client.getAllBalances(XION_CONFIG.treasuryAddress)
+    ]);
+    
+    // Helper function to find the main balance
+    const findMainBalance = (balances) => {
+      return balances.find(b => 
+        b.denom === XION_CONFIG.denom || 
+        b.denom === "uxion" || 
+        b.denom === "stake"
+      ) || { amount: "0", denom: XION_CONFIG.denom };
+    };
 
-    if (balance) {
-      setStatus(`Balance: ${balance.amount} ${balance.denom}`);
-    } else {
-      setStatus("Zero Balance");
-    }
+    const userBalance = findMainBalance(userBalances);
+    const treasuryBalance = findMainBalance(treasuryBalances);
+
+    setStatus(`
+      Your Balance: ${userBalance.amount} ${userBalance.denom}
+      Treasury Balance: ${treasuryBalance.amount} ${treasuryBalance.denom}
+    `);
+    
   } catch (error) {
-    setStatus(`No Balance Found`);
+    console.error("Balance check error:", error);
+    setStatus(`Error fetching balances: ${error.message}`);
   }
 };
 
