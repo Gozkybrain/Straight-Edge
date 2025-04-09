@@ -19,10 +19,8 @@ import './styles/App.css';
 
 // Available RPC endpoints
 const RPC_ENDPOINTS = [
-  { url: import.meta.env.VITE_XION_RPC, label: "Primary" },
-  { url: "https://xion-rpc.zensuite.xyz", label: "Zensuite" },
-  { url: "https://xion-rpc.polkachu.com", label: "Polkachu" },
-  { url: "https://xion-rpc.lavenderfive.com", label: "Lavender" }
+  { url: import.meta.env.VITE_XION_RPC, label: "Primary" }
+  
 ];
 
 // Initialize connection to Xion blockchain
@@ -77,7 +75,7 @@ function App() {
 
   const XION_CONFIG = {
     rpcEndpoint: currentRpc,
-    chainId: import.meta.env.VITE_XION_CHAIN_ID || 'xion-testnet-1',
+    chainId: import.meta.env.VITE_XION_CHAIN_ID || 'xion-testnet-2',
     denom: import.meta.env.VITE_XION_DENOM || 'uxion',
     gasPrice: import.meta.env.VITE_XION_GAS_PRICE || '0.025uxion',
     treasuryAddress: import.meta.env.VITE_TREASURY_ADDRESS
