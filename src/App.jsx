@@ -17,10 +17,12 @@ import {
 } from './lib/logic';
 import './styles/App.css';
 
-// Available RPC endpoints
+// Available RPC endpoints if official endpoint fails
 const RPC_ENDPOINTS = [
-  { url: import.meta.env.VITE_XION_RPC, label: "Primary" }
-  
+  { url: import.meta.env.VITE_XION_RPC, label: "Primary" },
+  { url: "https://xion-rpc.zensuite.xyz", label: "Zensuite" },
+  { url: "https://xion-rpc.polkachu.com", label: "Polkachu" },
+  { url: "https://xion-rpc.lavenderfive.com", label: "Lavender" }
 ];
 
 // Initialize connection to Xion blockchain
